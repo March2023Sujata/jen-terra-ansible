@@ -95,7 +95,7 @@ resource "azurerm_linux_virtual_machine" "VM" {
     private_key = file("~/.ssh/id_rsa")
   }
   provisioner "file" {
-    source    = "~/.ssh/authorized_keys/"
+    source    = "~/.ssh/authorized_keys"
     destination = "~/.ssh/authorized_keys"
   }
   provisioner "remote-exec" {

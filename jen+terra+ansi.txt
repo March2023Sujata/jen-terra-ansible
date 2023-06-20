@@ -3,6 +3,9 @@ https://medium.com/geekculture/the-most-simplified-integration-of-ansible-and-te
 https://azuredevopslabs.com/labs/vstsextend/ansible/
 
 
+
+
+In a machine whre terraform is installed do ssh-keygen
 terraform
 ------------------------------------
 create vm with ansible installed
