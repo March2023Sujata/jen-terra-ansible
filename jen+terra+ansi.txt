@@ -1,0 +1,20 @@
+https://github.com/jakewalsh90/Terraform-Azure/blob/main/Ansible-Quickstart/azuredeploy.tf
+https://medium.com/geekculture/the-most-simplified-integration-of-ansible-and-terraform-49f130b9fc8
+https://azuredevopslabs.com/labs/vstsextend/ansible/
+
+
+terraform
+------------------------------------
+create vm with ansible installed
+and
+create inventory
+
+create resource group
+create vnet
+create subnet
+create public ip
+create network interface 
+create security group
+
+
+use ansible vault or azure vault
