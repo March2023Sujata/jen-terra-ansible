@@ -94,15 +94,15 @@ resource "azurerm_linux_virtual_machine" "VM" {
     user        = azurerm_linux_virtual_machine.VM.admin_username
     private_key = file("~/.ssh/id_rsa")
   }
-
+   provisioner "file" {
+    source    = "ansible.sh"
+    destination = "/home/${var.vm_info.admin}/ansible.sh"
+  } 
   provisioner "file" {
     source    = "~/.ssh/authorized_keys"
     destination = "~/.ssh/authorized_keys"
   } 
-  provisioner "file" {
-    source    = "ansible.sh"
-    destination = "/home/${var.vm_info.admin}/ansible.sh"
-  } 
+ 
   provisioner "file" {
     source = "~/.ssh/id_rsa.pub"
     destination = "~/.ssh/id_rsa.pub"
