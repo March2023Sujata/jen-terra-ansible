@@ -97,19 +97,8 @@ resource "null_resource" "ansi-config" {
     private_key = file("~/.ssh/id_rsa")
   }
   
-  provisioner "file" {
-    source    = "~/.ssh/authorized_keys"
-    destination = "~/.ssh/authorized_keys"
-  } 
- 
-  provisioner "file" {
-    source = file("~/.ssh/id_rsa.pub")
-    destination = file("~/.ssh/id_rsa.pub")
-  }
-
-   provisioner "file" {
-    source = "~/.ssh/id_rsa"
-    destination = "~/.ssh/id_rsa"
+  provisioner "remote-exec" {
+    inline = [ "mkdir ~/.ssh" ]
   }
 }
 
