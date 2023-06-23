@@ -97,7 +97,7 @@ resource "azurerm_linux_virtual_machine" "VM" {
   user_data = filebase64("ansible.sh")
   depends_on = [
     azurerm_network_interface.NIC,
-    tls_private_key.pemkey
+    tls_private_key.ssh_key
   ] 
 }
 
