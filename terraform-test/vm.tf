@@ -88,7 +88,8 @@ resource "azurerm_linux_virtual_machine" "VM" {
   depends_on = [azurerm_network_interface.NIC] 
 }
 resource "null_resource" "ansi-config" {
-  
+  depends_on = [azurerm_linux_virtual_machine.VM]
+
   connection {
     type        = "ssh"
     host        = azurerm_linux_virtual_machine.VM.public_ip_address
