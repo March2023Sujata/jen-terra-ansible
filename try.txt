@@ -2,22 +2,29 @@ https://github.com/LanGuerreiro/Public-terraformDevopsVirtualServer/tree/main
 
 https://www.youtube.com/watch?v=08f41kEhNDw
 
-resource "local_file" "hosts" {
-  content  = azurerm_linux_virtual_machine.VM.private_ip_address
-  filename = "hosts"
+https://stackoverflow.com/questions/69403334/created-public-key-and-private-key-but-unable-to-login-vm-by-using-putty-how-to
+
+https://www.phillipsj.net/posts/generating-ssh-keys-with-terraform/
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+resource "tls_private_key" "example_ssh" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
 }
 
+resource "local_file" "private_key" {
+  content         = tls_private_key.example_ssh.private_key_pem
+  filename        = "example.pem"
+  file_permission = "0600"
+}
 
-  provisioner "file" {
-    source      = "hosts"
-    destination = "/home/${var.vm_info.admin}/hosts"
-  }
+admin_ssh_key {
+  username   = "azureuser"
+  public_key = tls_private_key.example_ssh.public_key_openssh
+}
 
-
-provisioner "local-exec" {
-    command = "ssh-copy-id ${var.vm_info.admin}@azurerm_linux_virtual_machine.VM.private_ip_address"
-  }
-
+ssh -i example.pem azureuser@PUBLIC_IP
+---------------------------------------------------------------------------------------------------------
 
 resource "null_resource" "ansible-config" {
   depends_on = [azurerm_linux_virtual_machine.VM]
