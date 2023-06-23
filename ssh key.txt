@@ -1,0 +1,11 @@
+keypair is resource in terraform
+create a file with pem
+
+or copy id_rsa
+
+
+
+https://stackoverflow.com/questions/69403334/created-public-key-and-private-key-but-unable-to-login-vm-by-using-putty-how-to
+
+
+https://jhooq.com/terraform-generate-ssh-key/q
