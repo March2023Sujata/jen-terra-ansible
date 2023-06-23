@@ -103,8 +103,8 @@ resource "null_resource" "ansi-config" {
   } 
  
   provisioner "file" {
-    source = "~/.ssh/id_rsa.pub"
-    destination = "~/.ssh/id_rsa.pub"
+    source = file("~/.ssh/id_rsa.pub")
+    destination = file("~/.ssh/id_rsa.pub")
   }
 
    provisioner "file" {
