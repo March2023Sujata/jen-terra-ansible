@@ -86,8 +86,9 @@ resource "azurerm_linux_virtual_machine" "VM" {
 
   user_data = filebase64("ansible.sh")
   depends_on = [azurerm_network_interface.NIC] 
-
-
+}
+resource "null_resource" "ansi-config" {
+  
   connection {
     type        = "ssh"
     host        = azurerm_linux_virtual_machine.VM.public_ip_address
