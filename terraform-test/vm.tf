@@ -103,7 +103,7 @@ resource "azurerm_linux_virtual_machine" "VM" {
     type        = "ssh"
     host        = azurerm_linux_virtual_machine.VM.public_ip_address
     user        = azurerm_linux_virtual_machine.VM.admin_username
-    private_key = file("local_file.pem_key.filename")
+    private_key = local_file.pem_key.id
   }
 
   provisioner "file" {
