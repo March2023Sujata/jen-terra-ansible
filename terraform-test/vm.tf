@@ -99,6 +99,19 @@ resource "azurerm_linux_virtual_machine" "VM" {
     azurerm_network_interface.NIC,
     tls_private_key.ssh_key
   ] 
+
+  connection {
+    type        = "ssh"
+    host        = azurerm_linux_virtual_machine.VM.public_ip_address
+    user        = azurerm_linux_virtual_machine.VM.admin_username
+    private_key = tls_private_key.ssh_key.private_key_openssh
+  }
+
+  provisioner "file" {
+    source = "./ansible.pem"
+    destination = "/home/${var.vm_info.admin}/ansible.pem"
+  }
+
 }
 
 
