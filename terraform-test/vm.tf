@@ -56,22 +56,29 @@ resource "azurerm_network_interface_security_group_association" "example" {
     azurerm_network_security_group.NSG
   ]
 }
-resource "tls_private_key" "pemkey" {
+resource "tls_private_key" "ssh_key" {
   algorithm = "RSA"
   rsa_bits  = 4096
 }
+resource "local_file" "pem_key" {
+  content = tls_private_key.ssh_key.private_key_pem
+  filename = "ansible.pem"
+  file_permission = "0600"
+}
+
 resource "azurerm_linux_virtual_machine" "VM" {
   name                = "ansible-${var.vm_info.vm_name}"
   resource_group_name = azurerm_resource_group.RG.name
   location            = azurerm_resource_group.RG.location
   size                = var.vm_info.vm_size
   admin_username      = var.vm_info.admin
+  disable_password_authentication = true
 
   network_interface_ids = [azurerm_network_interface.NIC.id]
 
   admin_ssh_key {
     username   = var.vm_info.admin
-    public_key = tls_private_key.pemkey.public_key_openssh
+    public_key = tls_private_key.ssh_key.public_key_openssh
   }
 
   os_disk {
@@ -88,19 +95,12 @@ resource "azurerm_linux_virtual_machine" "VM" {
   }
 
   user_data = filebase64("ansible.sh")
-  depends_on = [azurerm_network_interface.NIC] 
+  depends_on = [
+    azurerm_network_interface.NIC,
+    tls_private_key.pemkey
+  ] 
 }
-resource "null_resource" "ansi-config" {
-  depends_on = [azurerm_linux_virtual_machine.VM]
 
-  connection {
-    type        = "ssh"
-    host        = azurerm_linux_virtual_machine.VM.public_ip_address
-    user        = azurerm_linux_virtual_machine.VM.admin_username
-    private_key = tls_private_key.pemkey.private_key_pem
-  }
-  
-}
 
 
   
