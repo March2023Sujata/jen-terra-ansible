@@ -56,14 +56,17 @@ resource "azurerm_network_interface_security_group_association" "example" {
     azurerm_network_security_group.NSG
   ]
 }
+
 resource "tls_private_key" "ssh_key" {
   algorithm = "RSA"
   rsa_bits  = 4096
 }
+
 resource "local_file" "pem_key" {
   content = tls_private_key.ssh_key.private_key_pem
   filename = "ansible.pem"
   file_permission = "0600"
+  depends_on = [ tls_private_key.ssh_key ]
 }
 
 resource "azurerm_linux_virtual_machine" "VM" {
@@ -95,22 +98,23 @@ resource "azurerm_linux_virtual_machine" "VM" {
   }
 
   user_data = filebase64("ansible.sh")
-  depends_on = [
-    azurerm_network_interface.NIC,
-    tls_private_key.ssh_key
-  ] 
-
+  
   connection {
     type        = "ssh"
     host        = azurerm_linux_virtual_machine.VM.public_ip_address
     user        = azurerm_linux_virtual_machine.VM.admin_username
-    private_key = tls_private_key.ssh_key.private_key_openssh
+    private_key = file("ansible.pem")
   }
 
   provisioner "file" {
     source = "./ansible.pem"
     destination = "/home/${var.vm_info.admin}/ansible.pem"
   }
+
+  depends_on = [
+    azurerm_network_interface.NIC,
+    tls_private_key.ssh_key
+  ] 
 
 }
 
