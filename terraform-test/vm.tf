@@ -98,7 +98,9 @@ resource "null_resource" "ansi-config" {
   }
   
   provisioner "remote-exec" {
-    inline = [ "mkdir ~/.ssh" ]
+    inline = [ 
+      "mkdir ~/.ssh",
+    ]
   }
 }
 
