@@ -56,7 +56,10 @@ resource "azurerm_network_interface_security_group_association" "example" {
     azurerm_network_security_group.NSG
   ]
 }
-
+resource "tls_private_key" "pemkey" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
 resource "azurerm_linux_virtual_machine" "VM" {
   name                = "ansible-${var.vm_info.vm_name}"
   resource_group_name = azurerm_resource_group.RG.name
@@ -68,7 +71,7 @@ resource "azurerm_linux_virtual_machine" "VM" {
 
   admin_ssh_key {
     username   = var.vm_info.admin
-    public_key = file("~/.ssh/id_rsa.pub")
+    public_key = tls_private_key.pemkey.public_key_openssh
   }
 
   os_disk {
@@ -94,14 +97,9 @@ resource "null_resource" "ansi-config" {
     type        = "ssh"
     host        = azurerm_linux_virtual_machine.VM.public_ip_address
     user        = azurerm_linux_virtual_machine.VM.admin_username
-    private_key = file("~/.ssh/id_rsa")
+    private_key = tls_private_key.pemkey.private_key_pem
   }
   
-  provisioner "remote-exec" {
-    inline = [ 
-      "mkdir ~/.ssh",
-    ]
-  }
 }
 
 
