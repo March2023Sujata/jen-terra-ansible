@@ -141,7 +141,8 @@ resource "null_resource" "ansi-config" {
   provisioner "remote-exec" {
     inline = [ 
       "chmod 400 ./ansible.pem",
-      "ansible-playbook -i hosts apache.yml"
+     # "ansible -m ping -i hosts all -"
+      "ansible-playbook -i hosts apache.yml -y"
      ]
   } 
 
