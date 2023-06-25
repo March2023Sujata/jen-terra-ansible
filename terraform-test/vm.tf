@@ -141,6 +141,7 @@ resource "null_resource" "ansi-config" {
   provisioner "remote-exec" {
     inline = [
       "chmod 700 ./ansible.pem",
+      "sleep 10s",
       "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts apache.yml"
     ]
   }
