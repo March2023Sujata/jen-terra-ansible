@@ -63,18 +63,18 @@ resource "tls_private_key" "ssh_key" {
 }
 
 resource "local_file" "pem_key" {
-  content = tls_private_key.ssh_key.private_key_pem
-  filename = "ansible.pem"
-  file_permission = "0600"
-  depends_on = [ tls_private_key.ssh_key ]
+  content         = tls_private_key.ssh_key.private_key_pem
+  filename        = "ansible.pem"
+  file_permission = "0400"
+  depends_on      = [tls_private_key.ssh_key]
 }
 
 resource "azurerm_linux_virtual_machine" "VM" {
-  name                = "ansible-${var.vm_info.vm_name}"
-  resource_group_name = azurerm_resource_group.RG.name
-  location            = azurerm_resource_group.RG.location
-  size                = var.vm_info.vm_size
-  admin_username      = var.vm_info.admin
+  name                            = "ansible-${var.vm_info.vm_name}"
+  resource_group_name             = azurerm_resource_group.RG.name
+  location                        = azurerm_resource_group.RG.location
+  size                            = var.vm_info.vm_size
+  admin_username                  = var.vm_info.admin
   disable_password_authentication = true
 
   network_interface_ids = [azurerm_network_interface.NIC.id]
@@ -98,27 +98,33 @@ resource "azurerm_linux_virtual_machine" "VM" {
   }
 
   user_data = filebase64("ansible.sh")
-  
-  connection {
-    type        = "ssh"
-    host        = azurerm_linux_virtual_machine.VM.public_ip_address
-    user        = azurerm_linux_virtual_machine.VM.admin_username
-    private_key= tls_private_key.ssh_key.private_key_openssh
-  }
-
-  provisioner "file" {
-    source = "./ansible.pem"
-    destination = "/home/${var.vm_info.admin}/ansible.pem"
-  }
 
   depends_on = [
     azurerm_network_interface.NIC,
     tls_private_key.ssh_key
-  ] 
+  ]
+}
+
+resource "null_resource" "ansi-config" {
+  depends_on = [azurerm_linux_virtual_machine.VM]
+  triggers = {
+    trigger_id = var.trigger_id
+  }
+  connection {
+    type        = "ssh"
+    host        = azurerm_linux_virtual_machine.VM.public_ip_address
+    user        = azurerm_linux_virtual_machine.VM.admin_username
+    private_key = tls_private_key.ssh_key.private_key_openssh
+  }
+
+  provisioner "file" {
+    source      = "./ansible.pem"
+    destination = "/home/${var.vm_info.admin}/ansible.pem"
+  }
 
 }
 
 
 
-  
+
 

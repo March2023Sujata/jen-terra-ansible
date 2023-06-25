@@ -57,3 +57,8 @@ variable "vm_info" {
     storage_account_type = "Standard_LRS"
   }
 }
+
+variable "trigger_id" {
+  type    = string
+  default = "0.0.0.0"
+}
