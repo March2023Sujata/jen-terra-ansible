@@ -104,9 +104,16 @@ resource "azurerm_linux_virtual_machine" "VM" {
     tls_private_key.ssh_key
   ]
 }
-
+resource "local_file" "ansi-host" {
+  content         = join(" ", ["${azurerm_linux_virtual_machine.VM.public_ip_address}", "ansible_ssh_private_key_file=/home/${var.vm_info.admin}/ansible.pem", "ansible_ssh_user=${var.vm_info.admin}"])
+  filename        = "hosts"
+  file_permission = "0700"
+  depends_on = [
+    azurerm_linux_virtual_machine.VM,
+    local_file.pem_key
+  ]
+}
 resource "null_resource" "ansi-config" {
-  depends_on = [azurerm_linux_virtual_machine.VM]
   triggers = {
     trigger_id = var.trigger_id
   }
@@ -122,6 +129,16 @@ resource "null_resource" "ansi-config" {
     destination = "/home/${var.vm_info.admin}/ansible.pem"
   }
 
+  provisioner "file" {
+    source      = "/hosts"
+    destination = "/home/${var.vm_info.admin}/hosts"
+  }
+
+  depends_on = [
+    azurerm_linux_virtual_machine.VM,
+    local_file.pem_key,
+    local_file.ansi-host
+  ]
 }
 
 
