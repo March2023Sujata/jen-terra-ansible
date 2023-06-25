@@ -136,7 +136,7 @@ resource "null_resource" "ansi-config" {
 
   provisioner "file" {
     source      = "./apache.yml"
-    destination = "/home/${var.vm_info.admin}/hosts"
+    destination = "/home/${var.vm_info.admin}/apache.yml"
   }
   provisioner "remote-exec" {
     inline = [ 
