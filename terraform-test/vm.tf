@@ -65,7 +65,7 @@ resource "tls_private_key" "ssh_key" {
 resource "local_file" "pem_key" {
   content         = tls_private_key.ssh_key.private_key_pem
   filename        = "ansible.pem"
-  file_permission = "0400"
+  file_permission = "0700"
   depends_on      = [tls_private_key.ssh_key]
 }
 
