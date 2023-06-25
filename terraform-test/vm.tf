@@ -134,11 +134,18 @@ resource "null_resource" "ansi-config" {
     destination = "/home/${var.vm_info.admin}/hosts"
   }
 
+  provisioner "file" {
+    source      = "./apache.yml"
+    destination = "/home/${var.vm_info.admin}/hosts"
+  }
   provisioner "remote-exec" {
     inline = [ 
-      "chmod 400 ./ansible.pem"
+      "chmod 400 ./ansible.pem",
+      "ansible-playbook -i hosts apache.yml"
      ]
   } 
+
+
   depends_on = [
     azurerm_linux_virtual_machine.VM,
     local_file.pem_key,
