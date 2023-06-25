@@ -130,7 +130,7 @@ resource "null_resource" "ansi-config" {
   }
 
   provisioner "file" {
-    source      = "/hosts"
+    source      = "./hosts"
     destination = "/home/${var.vm_info.admin}/hosts"
   }
 
