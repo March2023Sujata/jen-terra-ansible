@@ -134,6 +134,11 @@ resource "null_resource" "ansi-config" {
     destination = "/home/${var.vm_info.admin}/hosts"
   }
 
+  provisioner "remote-exec" {
+    inline = [ 
+      "chmod 400 ./ansible.pem"
+     ]
+  } 
   depends_on = [
     azurerm_linux_virtual_machine.VM,
     local_file.pem_key,
