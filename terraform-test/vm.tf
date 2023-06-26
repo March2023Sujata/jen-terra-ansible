@@ -46,6 +46,7 @@ resource "azurerm_network_security_group" "NSG" {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
+  depends_on = [azurerm_resource_group.RG]
 }
 
 resource "azurerm_network_interface_security_group_association" "example" {
@@ -141,12 +142,16 @@ resource "null_resource" "ansi-config" {
   provisioner "remote-exec" {
     inline = [
       "chmod 700 ./ansible.pem",
-      "sleep 10s",
+      "sleep 20s",
+    ]
+  }
+   provisioner "remote-exec" {
+    inline = [
+      "sleep 20s",
       "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts apache.yml"
     ]
   }
-
- depends_on = [
+  depends_on = [
     azurerm_linux_virtual_machine.VM,
     local_file.pem_key,
     local_file.ansi-host

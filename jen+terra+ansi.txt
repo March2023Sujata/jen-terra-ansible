@@ -20,4 +20,8 @@ create network interface
 create security group
 
 
-use ansible vault or azure vault
+
+terraform apply -var "trigger_id=0.0.0.1" -auto-approve
+
+
+(use ansible vault or azure vault)
