@@ -144,6 +144,7 @@ resource "null_resource" "ansi-config" {
       "chmod 700 ./ansible.pem",
       "sleep 20s",
       "export ANSIBLE_HOST_KEY_CHECKING=False",
+      "sleep 10s",
       "ansible-playbook -i hosts apache.yml"
     ]
   }
