@@ -143,14 +143,11 @@ resource "null_resource" "ansi-config" {
     inline = [
       "chmod 700 ./ansible.pem",
       "sleep 20s",
+      "export ANSIBLE_HOST_KEY_CHECKING=False",
+      "ansible-playbook -i hosts apache.yml"
     ]
   }
-   provisioner "remote-exec" {
-    inline = [
-      "sleep 20s",
-      "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i hosts apache.yml"
-    ]
-  }
+
   depends_on = [
     azurerm_linux_virtual_machine.VM,
     local_file.pem_key,
