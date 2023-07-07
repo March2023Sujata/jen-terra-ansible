@@ -6,7 +6,7 @@ terraform {
     }
   }
   backend "azurerm" {
-    resource_group_name  = "aks-statefile"
+    resource_group_name  = "test"
     storage_account_name = "remotebackendstorage"
     container_name       = "remotebackend"
     key                  = "remote.terraform.tfstate"

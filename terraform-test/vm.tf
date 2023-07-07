@@ -66,7 +66,7 @@ resource "tls_private_key" "ssh_key" {
 resource "local_file" "pem_key" {
   content         = tls_private_key.ssh_key.private_key_pem
   filename        = "ansible.pem"
-  file_permission = "0700"
+  file_permission = "0600"
   depends_on      = [tls_private_key.ssh_key]
 }
 
@@ -98,7 +98,7 @@ resource "azurerm_linux_virtual_machine" "VM" {
     version   = "latest"
   }
 
-  user_data = filebase64("ansible.sh")
+  # user_data = filebase64("ansible.sh")
 
   depends_on = [
     azurerm_network_interface.NIC,
@@ -124,7 +124,18 @@ resource "null_resource" "ansi-config" {
     user        = azurerm_linux_virtual_machine.VM.admin_username
     private_key = tls_private_key.ssh_key.private_key_openssh
   }
-
+  
+  provisioner "file" {
+    source      = "./ansible.sh"
+    destination = "/home/${var.vm_info.admin}/ansible.sh"
+  }
+  provisioner "remote-exec" {
+    inline = [
+      "chmod 700 ./ansible.sh",
+      "sh ./ansible.sh",
+    ]
+  }
+  
   provisioner "file" {
     source      = "./ansible.pem"
     destination = "/home/${var.vm_info.admin}/ansible.pem"
@@ -139,16 +150,14 @@ resource "null_resource" "ansi-config" {
     source      = "./apache.yml"
     destination = "/home/${var.vm_info.admin}/apache.yml"
   }
+
   provisioner "remote-exec" {
     inline = [
       "chmod 700 ./ansible.pem",
-      "sleep 20s",
       "export ANSIBLE_HOST_KEY_CHECKING=False",
-      "sleep 10s",
       "ansible-playbook -i hosts apache.yml"
     ]
   }
-
   depends_on = [
     azurerm_linux_virtual_machine.VM,
     local_file.pem_key,
